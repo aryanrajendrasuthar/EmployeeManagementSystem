@@ -21,7 +21,7 @@ export default function EmployeeForm({ employee, onSuccess, onCancel }: Props) {
           name: employee.name,
           email: employee.email,
           role: employee.role,
-          departmentId: employee.department?.id,
+          departmentId: employee.departmentId,
           jobTitle: employee.jobTitle,
           salary: employee.salary,
           managerId: employee.managerId,

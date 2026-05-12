@@ -28,7 +28,11 @@ export default function Employees() {
   const fetchEmployees = () => {
     setLoading(true);
     employeeService
-      .getAll({ search: search || undefined, department: deptFilter || undefined, status: statusFilter || undefined })
+      .getAll({
+        search: search || undefined,
+        departmentId: deptFilter ? Number(deptFilter) : undefined,
+        status: statusFilter || undefined,
+      })
       .then(setEmployees)
       .finally(() => setLoading(false));
   };
@@ -70,7 +74,7 @@ export default function Employees() {
           />
           <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className="input-field w-48">
             <option value="">All Departments</option>
-            {departments.map((d) => <option key={d.id} value={d.name}>{d.name}</option>)}
+            {departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
           </select>
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="input-field w-40">
             <option value="">All Status</option>
@@ -103,7 +107,7 @@ export default function Employees() {
                     <div className="font-medium">{emp.name}</div>
                     <div className="text-xs text-gray-400">{emp.email}</div>
                   </td>
-                  <td className="py-3 px-4">{emp.department?.name}</td>
+                  <td className="py-3 px-4">{emp.department}</td>
                   <td className="py-3 px-4">{emp.jobTitle}</td>
                   <td className="py-3 px-4">
                     <span className={`badge ${statusColors[emp.status]}`}>{emp.status}</span>

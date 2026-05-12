@@ -2,12 +2,15 @@ package com.ems.controller;
 
 import com.ems.dto.EmployeeRequest;
 import com.ems.dto.EmployeeResponse;
+import com.ems.enums.EmployeeStatus;
 import com.ems.service.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,16 +22,25 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
+    @GetMapping("/me")
+    public ResponseEntity<EmployeeResponse> getMe(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(employeeService.getEmployeeByEmail(userDetails.getUsername()));
+    }
+
     @GetMapping
     public ResponseEntity<List<EmployeeResponse>> getAll(
             @RequestParam(required = false) String search,
-            @RequestParam(required = false) Long departmentId) {
+            @RequestParam(required = false) Long departmentId,
+            @RequestParam(required = false) EmployeeStatus status) {
 
         if (search != null && !search.isBlank()) {
             return ResponseEntity.ok(employeeService.searchEmployees(search));
         }
         if (departmentId != null) {
             return ResponseEntity.ok(employeeService.getEmployeesByDepartment(departmentId));
+        }
+        if (status != null) {
+            return ResponseEntity.ok(employeeService.getEmployeesByStatus(status));
         }
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }

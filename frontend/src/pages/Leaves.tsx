@@ -40,7 +40,7 @@ export default function Leaves() {
   useEffect(() => { fetchLeaves(); }, [statusFilter]);
 
   const onApply = async (data: LeaveRequestDto) => {
-    await leaveService.apply({ ...data, employeeId: user!.role === 'EMPLOYEE' ? (user as any).id : data.employeeId });
+    await leaveService.apply({ ...data, employeeId: user!.id });
     reset();
     setShowApply(false);
     fetchLeaves();

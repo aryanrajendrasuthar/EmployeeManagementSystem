@@ -3,7 +3,6 @@ import type {
   AuthRequest, AuthResponse, Employee, EmployeeRequest,
   Department, LeaveRequest, LeaveRequestDto,
   PayrollRecord, PayrollDto, PerformanceReview, PerformanceReviewDto,
-  DepartmentStat
 } from '../types';
 
 const api = axios.create({
@@ -31,13 +30,23 @@ api.interceptors.response.use(
   }
 );
 
+interface BackendLoginResponse {
+  token: string;
+  tokenType: string;
+  employee: Omit<AuthResponse, 'token'>;
+}
+
 export const authService = {
-  login: (data: AuthRequest) =>
-    api.post<AuthResponse>('/auth/login', data).then((r) => r.data),
+  // Flatten nested backend response { token, employee: {...} } into a single flat object
+  login: (data: AuthRequest): Promise<AuthResponse> =>
+    api.post<BackendLoginResponse>('/auth/login', data).then((r) => ({
+      token: r.data.token,
+      ...r.data.employee,
+    })),
 };
 
 export const employeeService = {
-  getAll: (params?: { search?: string; department?: string; status?: string }) =>
+  getAll: (params?: { search?: string; departmentId?: number; status?: string }) =>
     api.get<Employee[]>('/employees', { params }).then((r) => r.data),
   getById: (id: number) =>
     api.get<Employee>(`/employees/${id}`).then((r) => r.data),
@@ -50,7 +59,7 @@ export const employeeService = {
   delete: (id: number) =>
     api.delete(`/employees/${id}`),
   getTeam: (managerId: number) =>
-    api.get<Employee[]>(`/employees/manager/${managerId}`).then((r) => r.data),
+    api.get<Employee[]>(`/employees/${managerId}/reportees`).then((r) => r.data),
 };
 
 export const departmentService = {
@@ -67,27 +76,31 @@ export const departmentService = {
 };
 
 export const leaveService = {
-  getAll: (params?: { status?: string; employeeId?: number }) =>
+  getAll: (params?: { status?: string }) =>
     api.get<LeaveRequest[]>('/leaves', { params }).then((r) => r.data),
   getMyLeaves: () =>
     api.get<LeaveRequest[]>('/leaves/my').then((r) => r.data),
   getPending: () =>
     api.get<LeaveRequest[]>('/leaves/pending').then((r) => r.data),
+  getByEmployee: (employeeId: number) =>
+    api.get<LeaveRequest[]>(`/leaves/employee/${employeeId}`).then((r) => r.data),
   apply: (data: LeaveRequestDto) =>
     api.post<LeaveRequest>('/leaves/apply', data).then((r) => r.data),
   approve: (id: number, remarks?: string) =>
-    api.put(`/leaves/${id}/approve`, { remarks }),
+    api.put(`/leaves/${id}/approve`, remarks ? { remarks } : {}),
   reject: (id: number, remarks?: string) =>
-    api.put(`/leaves/${id}/reject`, { remarks }),
+    api.put(`/leaves/${id}/reject`, remarks ? { remarks } : {}),
   cancel: (id: number) =>
     api.put(`/leaves/${id}/cancel`),
 };
 
 export const payrollService = {
-  getAll: (params?: { month?: string; employeeId?: number }) =>
+  getAll: (params?: { month?: string }) =>
     api.get<PayrollRecord[]>('/payroll', { params }).then((r) => r.data),
   getMyPayroll: () =>
     api.get<PayrollRecord[]>('/payroll/my').then((r) => r.data),
+  getByEmployee: (employeeId: number) =>
+    api.get<PayrollRecord[]>(`/payroll/employee/${employeeId}`).then((r) => r.data),
   create: (data: PayrollDto) =>
     api.post<PayrollRecord>('/payroll', data).then((r) => r.data),
   update: (id: number, data: Partial<PayrollDto>) =>

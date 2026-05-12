@@ -8,12 +8,22 @@ export interface AuthRequest {
   password: string;
 }
 
+// Flat user object stored in auth context after login
 export interface AuthResponse {
   token: string;
+  id: number;
   employeeId: string;
   name: string;
   email: string;
   role: Role;
+  department: string;
+  departmentId: number;
+  jobTitle: string;
+  salary: number;
+  managerName?: string;
+  managerId?: number;
+  joiningDate: string;
+  status: EmployeeStatus;
 }
 
 export interface Department {
@@ -24,13 +34,15 @@ export interface Department {
   employeeCount?: number;
 }
 
+// Matches backend EmployeeResponse: department is a string (name), departmentId is Long
 export interface Employee {
   id: number;
   employeeId: string;
   name: string;
   email: string;
   role: Role;
-  department: Department;
+  department: string;       // department name
+  departmentId: number;     // department ID
   jobTitle: string;
   salary: number;
   managerId?: number;
@@ -56,19 +68,21 @@ export interface LeaveRequest {
   id: number;
   employeeId: number;
   employeeName: string;
+  employeeDepartment?: string;
   type: LeaveType;
   startDate: string;
   endDate: string;
   reason: string;
   status: LeaveStatus;
   approvedBy?: number;
+  approvedByName?: string;
   managerRemarks?: string;
   createdAt: string;
   daysCount: number;
 }
 
 export interface LeaveRequestDto {
-  employeeId: number;
+  employeeId?: number;
   type: LeaveType;
   startDate: string;
   endDate: string;
@@ -79,6 +93,8 @@ export interface PayrollRecord {
   id: number;
   employeeId: number;
   employeeName: string;
+  employeeIdCode?: string;
+  department?: string;
   month: string;
   baseSalary: number;
   bonuses: number;
@@ -117,12 +133,4 @@ export interface PerformanceReviewDto {
 export interface DepartmentStat {
   department: string;
   count: number;
-}
-
-export interface PaginatedResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  number: number;
-  size: number;
 }

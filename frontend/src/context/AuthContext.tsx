@@ -31,6 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, token]);
 
+  // data is already flattened by authService.login in api.ts
   const login = (data: AuthResponse) => {
     setUser(data);
     setToken(data.token);

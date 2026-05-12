@@ -1,11 +1,14 @@
 package com.ems.controller;
 
 import com.ems.dto.PayrollDto;
+import com.ems.service.EmployeeService;
 import com.ems.service.PayrollService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +19,14 @@ import java.util.List;
 public class PayrollController {
 
     private final PayrollService payrollService;
+    private final EmployeeService employeeService;
+
+    @GetMapping("/my")
+    public ResponseEntity<List<PayrollDto>> getMyPayroll(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Long employeeId = employeeService.getEmployeeByEmail(userDetails.getUsername()).getId();
+        return ResponseEntity.ok(payrollService.getPayrollByEmployee(employeeId));
+    }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('HR_ADMIN', 'MANAGER')")

@@ -147,6 +147,16 @@ public class EmployeeService {
                 .collect(Collectors.toList());
     }
 
+    public List<EmployeeResponse> getEmployeesByStatus(EmployeeStatus status) {
+        return employeeRepository.findByStatus(status)
+                .stream().map(this::mapToResponse).collect(Collectors.toList());
+    }
+
+    public EmployeeResponse getEmployeeByEmail(String email) {
+        return mapToResponse(employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found")));
+    }
+
     public List<Object[]> getDepartmentHeadcount() {
         return employeeRepository.countByDepartment();
     }

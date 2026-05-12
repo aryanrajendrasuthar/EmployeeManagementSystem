@@ -26,9 +26,9 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
     @Query("SELECT l FROM LeaveRequest l WHERE l.employee.manager.id = :managerId")
     List<LeaveRequest> findByManagerId(@Param("managerId") Long managerId);
 
-    @Query("SELECT l.type, COUNT(l) FROM LeaveRequest l WHERE l.status = 'APPROVED' GROUP BY l.type")
+    @Query("SELECT l.type, COUNT(l) FROM LeaveRequest l WHERE l.status = com.ems.enums.LeaveStatus.APPROVED GROUP BY l.type")
     List<Object[]> countApprovedByType();
 
-    @Query("SELECT MONTH(l.startDate), COUNT(l) FROM LeaveRequest l WHERE l.status = 'APPROVED' GROUP BY MONTH(l.startDate)")
+    @Query("SELECT EXTRACT(MONTH FROM l.startDate), COUNT(l) FROM LeaveRequest l WHERE l.status = com.ems.enums.LeaveStatus.APPROVED GROUP BY EXTRACT(MONTH FROM l.startDate)")
     List<Object[]> countApprovedByMonth();
 }

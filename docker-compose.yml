@@ -38,8 +38,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ems_password
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
-      APP_JWT_SECRET: dGhpcy1pcy1hLXZlcnktbG9uZy1zZWNyZXQta2V5LWZvci1qd3Qtc2lnbmluZy0yMDI0
-      APP_JWT_EXPIRATION: 86400000
+      JWT_SECRET: dGhpcy1pcy1hLXZlcnktbG9uZy1zZWNyZXQta2V5LWZvci1qd3Qtc2lnbmluZy0yMDI0
+      JWT_EXPIRATION: 86400000
     ports:
       - "8080:8080"
     depends_on:

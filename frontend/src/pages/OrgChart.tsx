@@ -19,7 +19,7 @@ function buildTree(employees: Employee[]): OrgNode[] {
       id: e.id,
       name: e.name,
       jobTitle: e.jobTitle,
-      department: e.department?.name ?? '',
+      department: e.department ?? '',
       role: e.role,
       children: [],
     });

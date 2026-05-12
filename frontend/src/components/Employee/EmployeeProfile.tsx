@@ -43,7 +43,7 @@ export default function EmployeeProfile({ employee, onClose }: Props) {
       <dl className="grid grid-cols-2 gap-4">
         {field('Employee ID', employee.employeeId)}
         {field('Email', employee.email)}
-        {field('Department', employee.department?.name)}
+        {field('Department', employee.department)}
         {field('Role', employee.role.replace('_', ' '))}
         {field('Manager', employee.managerName ?? '—')}
         {field('Joining Date', employee.joiningDate)}
